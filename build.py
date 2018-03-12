@@ -11,7 +11,7 @@ parser.add_argument('-p', '--package', required=True, choices=['binutils',
 parser.add_argument('-v', '--version', dest='version', default='', help='package version')
 parser.add_argument('-o', '--out-dir', dest='out_dir', help='output binary directory')
 parser.add_argument('-O', '--optimization', type=int,
-        dest='optimization', help='compiler optimization')
+        dest='optimization', default=0, help='compiler optimization')
 
 info = {}
 info['binutils'] = ['binutils-%s.tar.gz', '2.24',
@@ -24,7 +24,7 @@ info['findutils'] = ['findutils-%s.tar.gz', '4.4.2',
                      'http://ftp.gnu.org/pub/gnu/findutils/findutils-%s.tar.gz',
                      '-xzf', '']
 
-def build(package, version, optimization=0, out_dir=os.path.join(os.getcwd(),
+def build(package, version, optimization, out_dir=os.path.join(os.getcwd(),
 'bin')):
     if version == '':
         name, version, url, untar_arg, extra = info[package]
@@ -37,7 +37,7 @@ def build(package, version, optimization=0, out_dir=os.path.join(os.getcwd(),
     prefix = '/tmp/%s' % untar_dir
 
     print "Downloading package from %s..." % url
-    subprocess.call(['wget', url])
+    subprocess.call(['wget', '-c', url])
 
     print "Uncompress package %s..." % name
     subprocess.call(['tar', untar_arg, name])
@@ -65,4 +65,4 @@ def build(package, version, optimization=0, out_dir=os.path.join(os.getcwd(),
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    build(args.package, args.version)
+    build(args.package, args.version, args.optimization)
